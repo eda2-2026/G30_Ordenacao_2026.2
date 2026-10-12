@@ -6,15 +6,21 @@ from ordenacoes import (
     selection_sort,
     insertion_sort,
     bubble_sort,
+    counting_sort,
+    radix_sort,
+    heap_sort,
 )
 
 ALGORITMOS = {
     "selection": selection_sort,
     "insertion": insertion_sort,
     "bubble": bubble_sort,
+    "counting": counting_sort,
+    "radix": radix_sort,
+    "heap": heap_sort,
 }
 
-ESTAVEIS = {"insertion", "bubble"}
+ESTAVEIS = {"insertion", "bubble", "counting", "radix"}
 
 
 def gerar_filmes(n, semente=42):
@@ -55,7 +61,7 @@ class TestOrdenacoes(unittest.TestCase):
     def test_ordena_por_titulo_algoritmos_comparativos(self):
         filmes = gerar_filmes(100)
         random.Random(1).shuffle(filmes)
-        for nome in ("selection", "insertion", "bubble"):
+        for nome in ("selection", "insertion", "bubble", "heap"):
             with self.subTest(algoritmo=nome):
                 self.verificar(nome, filmes, chave=lambda f: f.titulo.casefold())
 
@@ -91,6 +97,12 @@ class TestOrdenacoes(unittest.TestCase):
                 _, comparacoes, movimentacoes = ALGORITMOS[nome](filmes, chave=lambda f: f.codigo)
                 self.assertEqual(comparacoes, len(filmes) - 1)
                 self.assertEqual(movimentacoes, 0)
+
+    def test_radix_rejeita_negativos(self):
+        filmes = [Filme(codigo=-5, titulo="x", ano=0, genero="x"),
+                  Filme(codigo=3, titulo="y", ano=0, genero="y")]
+        with self.assertRaises(ValueError):
+            radix_sort(filmes, chave=lambda f: f.codigo)
 
 
 if __name__ == "__main__":
