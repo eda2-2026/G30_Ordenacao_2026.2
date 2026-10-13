@@ -35,8 +35,19 @@ Na segunda etapa o catálogo também pode ser **ordenado** por qualquer campo, u
 
 ## Screenshots
 
+### Exemplo de ordenação com Bubble Sort
+![bubble](imagens/bubble.png.png)
+
+### Exemplo de ordenação com Insertion Sort
+![insertion](imagens/insertion.png.png)
+
+### Comparação de desempenho entre algoritmos de ordenção
+![comparativo](imagens/comparativo.png.png)
+
 
 ## Video 
+https://youtu.be/o7OGsmxZY_U
+
 
 ## Instalação 
 Linguagem: Python<br>
