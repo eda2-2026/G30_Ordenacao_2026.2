@@ -18,6 +18,8 @@ from ordenacoes import (
     heap_sort,
 )
 
+# quantas ocorrências uma busca por trecho (título/gênero) devolve no
+# máximo -- ela para de procurar assim que atingir esse número.
 LIMITE_BUSCA_POR_TRECHO = 10
 
 CAMPOS = {
@@ -71,6 +73,8 @@ METODOS = {
     "5": "Busca por Hashing",
 }
 
+# "apenas_numerico": counting/radix indexam um vetor pelo valor da chave,
+# então só funcionam com chaves inteiras (código e ano).
 ALGORITMOS_ORDENACAO = {
     "1": {"nome": "Selection Sort", "funcao": selection_sort, "apenas_numerico": False},
     "2": {"nome": "Insertion Sort", "funcao": insertion_sort, "apenas_numerico": False},
@@ -90,6 +94,8 @@ def montar_estruturas(filmes):
     tamanho_hash = tamanho_recomendado_para_hash(len(filmes))
     for campo in CAMPOS.values():
         chave = campo["chave"]
+        # vetor ordenado usado pela busca binária / interpolação, agora
+        # gerado pelo nosso Heap Sort (O(n log n)) em vez do sorted() do Python
         ordenados, _, _ = heap_sort(filmes, chave=chave)
 
         arvore = montar_arvore_balanceada(ordenados, chave=chave)
@@ -284,6 +290,50 @@ def menu_ordenacao(filmes):
         ordenar_catalogo(algoritmo, campos[escolha_campo], filmes)
 
 
+TAMANHO_PADRAO_COMPARATIVO = 1000
+
+
+def ler_tamanho_amostra(total):
+    while True:
+        entrada = input(f"Quantos filmes usar? (1 a {total}, Enter = "
+                        f"{TAMANHO_PADRAO_COMPARATIVO}): ").strip()
+        if entrada == "":
+            return min(TAMANHO_PADRAO_COMPARATIVO, total)
+        if entrada.isdigit() and 1 <= int(entrada) <= total:
+            return int(entrada)
+        print("Valor inválido.\n")
+
+
+def comparar_ordenacoes(filmes):
+    campo = CAMPOS["1"]  # código: numérico, então todos os algoritmos se aplicam
+    chave = campo["chave"]
+
+    print("\n--- Comparativo de desempenho dos algoritmos de ordenação ---")
+    print("(os algoritmos O(n^2) ficam lentos com o catálogo inteiro)")
+    n = ler_tamanho_amostra(len(filmes))
+
+    amostra = filmes[:n]
+    crescente, _, _ = heap_sort(amostra, chave=chave)
+    cenarios = {
+        "Ordem original do CSV": amostra,
+        "Já ordenado": crescente,
+        "Ordem inversa": crescente[::-1],
+    }
+
+    for nome_cenario, entrada in cenarios.items():
+        print(f"\n>> Cenário: {nome_cenario} | {n} filmes | chave: {campo['nome']}")
+        cabecalho = f"{'Algoritmo':<18}{'Comparações':>14}{'Movimentações':>16}{'Tempo (ms)':>14}"
+        print(cabecalho)
+        print("-" * len(cabecalho))
+        for algoritmo in ALGORITMOS_ORDENACAO.values():
+            inicio = time.perf_counter()
+            _, comparacoes, movimentacoes = algoritmo["funcao"](entrada, chave=chave)
+            fim = time.perf_counter()
+            print(f"{algoritmo['nome']:<18}{comparacoes:>14}{movimentacoes:>16}"
+                  f"{(fim - inicio) * 1000:>14.4f}")
+    print()
+
+
 def menu_principal():
     filmes = carregar_filmes()
     estruturas = montar_estruturas(filmes)
@@ -297,6 +347,7 @@ def menu_principal():
         print("6 - Listar catálogo")
         print("7 - Comparar desempenho dos métodos")
         print("8 - Ordenar catálogo")
+        print("9 - Comparar desempenho dos algoritmos de ordenação")
         print("0 - Sair")
 
         escolha = input("Escolha uma opção: ").strip()
@@ -310,6 +361,8 @@ def menu_principal():
             comparar_metodos(filmes, estruturas)
         elif escolha == "8":
             menu_ordenacao(filmes)
+        elif escolha == "9":
+            comparar_ordenacoes(filmes)
         elif escolha in METODOS:
             menu_campo(escolha, METODOS[escolha], filmes, estruturas)
         else:
