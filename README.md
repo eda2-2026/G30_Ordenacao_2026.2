@@ -36,13 +36,13 @@ Na segunda etapa o catálogo também pode ser **ordenado** por qualquer campo, u
 ## Screenshots
 
 ### Exemplo de ordenação com Bubble Sort
-![bubble](imagens/bubble.png.png)
+![bubble](imagens/bubble.png)
 
 ### Exemplo de ordenação com Insertion Sort
-![insertion](imagens/insertion.png.png)
+![insertion](imagens/insertion.png)
 
 ### Comparação de desempenho entre algoritmos de ordenção
-![comparativo](imagens/comparativo.png.png)
+![comparativo](imagens/comparativo.png)
 
 
 ## Video 
